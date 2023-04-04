@@ -10,7 +10,7 @@ public class Main {
 
     JFrame frame = new JFrame();
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setTitle("INF101");
+    frame.setTitle("Racing 2D");
     frame.setContentPane(view);
     frame.pack();
     frame.setVisible(true);
