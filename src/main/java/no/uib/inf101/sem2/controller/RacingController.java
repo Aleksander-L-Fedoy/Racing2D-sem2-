@@ -6,8 +6,9 @@ import no.uib.inf101.sem2.midi.SongHandler;
 import no.uib.inf101.sem2.model.GameState;
 
 public class RacingController {
-    private int x;
+    private int x, sideMargin, windowWidth;
     private SongHandler song;
+    private final int carWidth = 63;
 
     public RacingController() {
         this.song = new SongHandler();
@@ -50,14 +51,28 @@ public class RacingController {
     private void activeGame(KeyEvent keyEvent) {
         switch (keyEvent.getKeyCode()) {
             case KeyEvent.VK_LEFT:
-                this.x -= 10;
+                if (noCollsion(x - 10)) {
+                    this.x -= 10;
+                }
                 break;
             case KeyEvent.VK_RIGHT:
-                this.x += 10;
+                if (noCollsion(x + 10)) {
+                    this.x += 10;
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    private boolean noCollsion(int x) {
+        System.out.println("x: " + x);
+        System.out.println("sideM: " + sideMargin);
+        System.out.println("width: " + windowWidth);
+        if (x > sideMargin && x + carWidth < windowWidth - sideMargin) {
+            return true;
+        }
+        return false;
     }
 
     public int getX() {
@@ -66,6 +81,14 @@ public class RacingController {
 
     public void setX(int x) {
         this.x = x;
+    }
+
+    public void setSideMargin(int sideMargin) {
+        this.sideMargin = sideMargin;
+    }
+
+    public void setWindowWidth(int windowWidth) {
+        this.windowWidth = windowWidth;
     }
 
 }

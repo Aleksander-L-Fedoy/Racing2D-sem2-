@@ -23,7 +23,7 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
   private RacingController racingController;
   private String[][] tiles, backgroundTiles;
   private int x, y, rows, cols, width, height, sideMargin;
-  private final int delayMs = 1;
+  private final int delayMs = 10;
   private final int tileWidth = 32;
   private final BufferedImage car = Inf101Graphics.loadImageFromResources("/car.png");
   private final BufferedImage roadTile = Inf101Graphics.loadImageFromResources("/road_tile_v2.png");
@@ -96,7 +96,7 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
       this.height = this.getHeight();
     }
     this.sideMargin = (this.getWidth() - this.cols * this.tileWidth) / 2;
-    this.y += this.tileWidth / 4;
+    this.y += this.tileWidth / 5;
     if (this.y >= (this.height - this.tileWidth) * 2) {
       this.y = this.height - this.tileWidth;
       this.checkHeight = true;
@@ -106,6 +106,8 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
 
   @Override
   public void keyPressed(KeyEvent keyEvent) {
+    racingController.setSideMargin(this.sideMargin);
+    racingController.setWindowWidth(this.getWidth());
     racingController.keyPressed(keyEvent);
     this.x = racingController.getX();
     repaint();
