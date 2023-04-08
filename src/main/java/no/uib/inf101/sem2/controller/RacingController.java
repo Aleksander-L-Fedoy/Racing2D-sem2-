@@ -2,21 +2,18 @@ package no.uib.inf101.sem2.controller;
 
 import java.awt.event.KeyEvent;
 
+import no.uib.inf101.sem2.midi.SongHandler;
 import no.uib.inf101.sem2.model.GameState;
-import no.uib.inf101.sem2.model.RacingModel;
-import no.uib.inf101.sem2.view.Racing2DView;
 
-public class RacingController implements java.awt.event.KeyListener {
-    private RacingModel racingModel;
-    private Racing2DView racing2dView;
+public class RacingController {
+    private int x;
+    private SongHandler song;
 
-    public RacingController(RacingModel racingModel, Racing2DView racing2dView) {
-        this.racingModel = racingModel;
-        this.racing2dView = racing2dView;
-        racing2dView.addKeyListener(this);
+    public RacingController() {
+        this.song = new SongHandler();
+        this.song.run();
     }
 
-    @Override
     public void keyPressed(KeyEvent keyEvent) {
         // if (racingModel.getGameState() == GameState.GAME_OVER) {
         // endedGame(keyEvent);
@@ -26,7 +23,6 @@ public class RacingController implements java.awt.event.KeyListener {
         // activeGame(keyEvent);
         // }
         activeGame(keyEvent);
-        this.racing2dView.repaint();
     }
 
     /**
@@ -36,8 +32,7 @@ public class RacingController implements java.awt.event.KeyListener {
      */
     private void endedGame(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_R) {
-            racingModel.reset();
-            racing2dView.repaint();
+            // racingModel.reset();
         }
     }
 
@@ -48,39 +43,29 @@ public class RacingController implements java.awt.event.KeyListener {
      */
     private void startedGame(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-            this.racingModel.setGameStateToActive();
-            System.out.println("Enter was pressed");
+            // this.racingModel.setGameStateToActive();
         }
     }
 
     private void activeGame(KeyEvent keyEvent) {
         switch (keyEvent.getKeyCode()) {
             case KeyEvent.VK_LEFT:
-                moveCar(-10);
-                System.out.println("Left arrow was pressed");
+                this.x -= 10;
                 break;
             case KeyEvent.VK_RIGHT:
-                moveCar(10);
-                System.out.println("Right arrow was pressed");
+                this.x += 10;
                 break;
             default:
                 break;
         }
     }
 
-    @Override
-    public void keyReleased(KeyEvent keyEvent) {
-        System.out.println("Key released");
+    public int getX() {
+        return x;
     }
 
-    @Override
-    public void keyTyped(KeyEvent keyEvent) {
-        System.out.println("Key typed");
-    }
-
-    public void moveCar(int deltaX) {
-        int newX = racing2dView.getX() + deltaX;
-        racing2dView.drawCar(newX);
+    public void setX(int x) {
+        this.x = x;
     }
 
 }

@@ -2,6 +2,7 @@ package no.uib.inf101.sem2;
 
 import javax.swing.JFrame;
 
+import no.uib.inf101.sem2.controller.RacingController;
 import no.uib.inf101.sem2.model.RacingBoard;
 import no.uib.inf101.sem2.model.RacingModel;
 import no.uib.inf101.sem2.view.Racing2DView;
@@ -12,7 +13,8 @@ public class Main {
   public static void main(String[] args) {
     RacingBoard racingBoard = new RacingBoard(70, 19);
     RacingModel racingModel = new RacingModel(racingBoard);
-    Racing2DView racing2dView = new Racing2DView(racingModel);
+    RacingController racingController = new RacingController();
+    Racing2DView racing2dView = new Racing2DView(racingModel, racingController);
     JFrame frame = new JFrame();
 
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

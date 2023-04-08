@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import no.uib.inf101.sem2.controller.RacingController;
 import no.uib.inf101.sem2.model.RacingModel;
 
 public class Racing2DView extends JPanel implements ActionListener, java.awt.event.KeyListener {
@@ -19,9 +20,11 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
   private Graphics2D graphics2d;
   private RacingModel racingModel;
   private boolean checkHeight = false;
+  private RacingController racingController;
   private String[][] tiles, backgroundTiles;
   private int x, y, rows, cols, width, height, sideMargin;
   private final int delayMs = 1;
+  private final int tileWidth = 32;
   private final BufferedImage car = Inf101Graphics.loadImageFromResources("/car.png");
   private final BufferedImage roadTile = Inf101Graphics.loadImageFromResources("/road_tile_v2.png");
   private final BufferedImage grassTile = Inf101Graphics.loadImageFromResources("/grass_tile_v2.png");
@@ -29,23 +32,26 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
   private final BufferedImage yellowLaneSeperatorTile = Inf101Graphics
       .loadImageFromResources("/yellow_lane_seperator_v2.png");
 
-  public Racing2DView(RacingModel racingModel) {
+  public Racing2DView(RacingModel racingModel, RacingController racingController) {
     this.racingModel = racingModel;
+    this.racingController = racingController;
     this.rows = racingModel.getRows();
     this.cols = racingModel.getCols();
     this.width = 1200;
     this.height = 800;
     this.x = this.width / 2;
-    this.y = this.height - 32;
+    this.y = this.height - this.tileWidth;
     this.tiles = racingModel.getTiles();
     this.backgroundTiles = racingModel.getBackgroundTiles();
     this.setFocusable(true);
     this.setPreferredSize(new Dimension(width, height));
     this.setBackground(Color.BLACK);
     this.addKeyListener(this);
-    this.sideMargin = (this.getWidth() - cols * 32) / 2;
+    this.sideMargin = (this.getWidth() - this.cols * this.tileWidth) / 2;
     this.timer = new Timer(delayMs, this);
     this.timer.start();
+
+    racingController.setX(this.x);
   }
 
   @Override
@@ -72,9 +78,9 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
         if (tiles[row][col] == "yellowLaneSeperatorTile") {
           Inf101Graphics.drawImage(graphics2d, yellowLaneSeperatorTile, x, y, 0.5);
         }
-        x += 32;
+        x += this.tileWidth;
       }
-      y -= 32;
+      y -= this.tileWidth;
       x = sideMargin;
     }
   }
@@ -89,10 +95,10 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
     if (this.checkHeight) {
       this.height = this.getHeight();
     }
-    this.sideMargin = (this.getWidth() - cols * 32) / 2;
-    this.y += 8;
-    if (this.y >= this.height * 2 - 64) {
-      this.y = this.height - 32;
+    this.sideMargin = (this.getWidth() - this.cols * this.tileWidth) / 2;
+    this.y += this.tileWidth / 4;
+    if (this.y >= (this.height - this.tileWidth) * 2) {
+      this.y = this.height - this.tileWidth;
       this.checkHeight = true;
     }
     repaint();
@@ -100,51 +106,9 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
 
   @Override
   public void keyPressed(KeyEvent keyEvent) {
-    // if (racingModel.getGameState() == GameState.GAME_OVER) {
-    // endedGame(keyEvent);
-    // } else if (racingModel.getGameState() == GameState.GAME_STARTED) {
-    // startedGame(keyEvent);
-    // } else {
-    // activeGame(keyEvent);
-    // }
-    activeGame(keyEvent);
+    racingController.keyPressed(keyEvent);
+    this.x = racingController.getX();
     repaint();
-  }
-
-  /**
-   * Handles key events when the game is over.
-   *
-   * @param keyEvent The key event that occurred.
-   */
-  private void endedGame(KeyEvent keyEvent) {
-    if (keyEvent.getKeyCode() == KeyEvent.VK_R) {
-      racingModel.reset();
-      repaint();
-    }
-  }
-
-  /**
-   * Handles key events when the game has started but is not yet active.
-   *
-   * @param keyEvent The key event that occurred.
-   */
-  private void startedGame(KeyEvent keyEvent) {
-    if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-      this.racingModel.setGameStateToActive();
-    }
-  }
-
-  private void activeGame(KeyEvent keyEvent) {
-    switch (keyEvent.getKeyCode()) {
-      case KeyEvent.VK_LEFT:
-        x -= 10;
-        break;
-      case KeyEvent.VK_RIGHT:
-        x += 10;
-        break;
-      default:
-        break;
-    }
   }
 
   @Override
