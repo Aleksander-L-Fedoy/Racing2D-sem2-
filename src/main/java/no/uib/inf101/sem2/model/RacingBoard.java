@@ -64,4 +64,11 @@ public class RacingBoard {
         return tiles;
     }
 
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
 }

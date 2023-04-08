@@ -1,44 +1,86 @@
-// package no.uib.inf101.sem2.controller;
+package no.uib.inf101.sem2.controller;
 
-// import java.awt.event.ActionEvent;
-// import java.awt.event.KeyEvent;
+import java.awt.event.KeyEvent;
 
-// import javax.swing.Timer;
+import no.uib.inf101.sem2.model.GameState;
+import no.uib.inf101.sem2.model.RacingModel;
+import no.uib.inf101.sem2.view.Racing2DView;
 
-// import no.uib.inf101.sem2.view.Racing2DView;
+public class RacingController implements java.awt.event.KeyListener {
+    private RacingModel racingModel;
+    private Racing2DView racing2dView;
 
-// public class RacingController implements java.awt.event.KeyListener {
-// private Racing2DView racing2dView;
-// private Timer timer;
+    public RacingController(RacingModel racingModel, Racing2DView racing2dView) {
+        this.racingModel = racingModel;
+        this.racing2dView = racing2dView;
+        racing2dView.addKeyListener(this);
+    }
 
-// public RacingController(Racing2DView racing2dView) {
-// this.racing2dView = racing2dView;
-// this.timer = new Timer(1000, this::clockTick);
-// racing2dView.setFocusable(true);
-// racing2dView.addKeyListener(this);
-// this.timer.start();
-// }
+    @Override
+    public void keyPressed(KeyEvent keyEvent) {
+        // if (racingModel.getGameState() == GameState.GAME_OVER) {
+        // endedGame(keyEvent);
+        // } else if (racingModel.getGameState() == GameState.GAME_STARTED) {
+        // startedGame(keyEvent);
+        // } else {
+        // activeGame(keyEvent);
+        // }
+        activeGame(keyEvent);
+        this.racing2dView.repaint();
+    }
 
-// @Override
-// public void keyPressed(KeyEvent arg0) {
-// // TODO Auto-generated method stub
-// throw new UnsupportedOperationException("Unimplemented method 'keyPressed'");
-// }
+    /**
+     * Handles key events when the game is over.
+     *
+     * @param keyEvent The key event that occurred.
+     */
+    private void endedGame(KeyEvent keyEvent) {
+        if (keyEvent.getKeyCode() == KeyEvent.VK_R) {
+            racingModel.reset();
+            racing2dView.repaint();
+        }
+    }
 
-// @Override
-// public void keyReleased(KeyEvent arg0) {
-// // TODO Auto-generated method stub
-// throw new UnsupportedOperationException("Unimplemented method
-// 'keyReleased'");
-// }
+    /**
+     * Handles key events when the game has started but is not yet active.
+     *
+     * @param keyEvent The key event that occurred.
+     */
+    private void startedGame(KeyEvent keyEvent) {
+        if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+            this.racingModel.setGameStateToActive();
+            System.out.println("Enter was pressed");
+        }
+    }
 
-// @Override
-// public void keyTyped(KeyEvent arg0) {
-// // TODO Auto-generated method stub
-// throw new UnsupportedOperationException("Unimplemented method 'keyTyped'");
-// }
+    private void activeGame(KeyEvent keyEvent) {
+        switch (keyEvent.getKeyCode()) {
+            case KeyEvent.VK_LEFT:
+                moveCar(-10);
+                System.out.println("Left arrow was pressed");
+                break;
+            case KeyEvent.VK_RIGHT:
+                moveCar(10);
+                System.out.println("Right arrow was pressed");
+                break;
+            default:
+                break;
+        }
+    }
 
-// public void clockTick(ActionEvent actionEvent) {
-// this.racing2dView.repaint();
-// }
-// }
+    @Override
+    public void keyReleased(KeyEvent keyEvent) {
+        System.out.println("Key released");
+    }
+
+    @Override
+    public void keyTyped(KeyEvent keyEvent) {
+        System.out.println("Key typed");
+    }
+
+    public void moveCar(int deltaX) {
+        int newX = racing2dView.getX() + deltaX;
+        racing2dView.drawCar(newX);
+    }
+
+}
