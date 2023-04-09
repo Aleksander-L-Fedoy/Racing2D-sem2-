@@ -4,26 +4,29 @@ import java.awt.event.KeyEvent;
 
 import no.uib.inf101.sem2.midi.SongHandler;
 import no.uib.inf101.sem2.model.GameState;
+import no.uib.inf101.sem2.model.RacingModel;
 
 public class RacingController {
+    private RacingModel racingModel;
     private int x, sideMargin, windowWidth;
     private SongHandler song;
-    private final int carWidth = 63;
+    private final int CARWIDTH = 63;
+    private final int OFFSET = 15;
 
-    public RacingController() {
+    public RacingController(RacingModel racingModel) {
+        this.racingModel = racingModel;
         this.song = new SongHandler();
         this.song.run();
     }
 
     public void keyPressed(KeyEvent keyEvent) {
-        // if (racingModel.getGameState() == GameState.GAME_OVER) {
-        // endedGame(keyEvent);
-        // } else if (racingModel.getGameState() == GameState.GAME_STARTED) {
-        // startedGame(keyEvent);
-        // } else {
-        // activeGame(keyEvent);
-        // }
-        activeGame(keyEvent);
+        if (racingModel.getGameState() == GameState.GAME_OVER) {
+            endedGame(keyEvent);
+        } else if (racingModel.getGameState() == GameState.GAME_STARTED) {
+            startedGame(keyEvent);
+        } else {
+            activeGame(keyEvent);
+        }
     }
 
     /**
@@ -44,37 +47,28 @@ public class RacingController {
      */
     private void startedGame(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-            // this.racingModel.setGameStateToActive();
+            this.racingModel.setGameStateToActive();
         }
     }
 
     private void activeGame(KeyEvent keyEvent) {
-        switch (keyEvent.getKeyCode()) {
-            case KeyEvent.VK_LEFT:
-                if (noCollsion(x - 10)) {
-                    this.x -= 10;
-                }
-                break;
-            case KeyEvent.VK_RIGHT:
-                if (noCollsion(x + 10)) {
-                    this.x += 10;
-                }
-                break;
-            default:
-                break;
+        int keyCode = keyEvent.getKeyCode();
+        if (keyCode == KeyEvent.VK_LEFT) {
+            if (noCollision(x - OFFSET)) {
+                x -= OFFSET;
+            }
+        } else if (keyCode == KeyEvent.VK_RIGHT) {
+            if (noCollision(x + OFFSET)) {
+                x += OFFSET;
+            }
         }
     }
 
-    private boolean noCollsion(int x) {
-        System.out.println("x: " + x);
-        System.out.println("sideM: " + sideMargin);
-        System.out.println("width: " + windowWidth);
-        if (x > sideMargin && x + carWidth < windowWidth - sideMargin) {
-            return true;
-        }
-        return false;
+    private boolean noCollision(int x) {
+        return x > sideMargin && x + CARWIDTH < windowWidth - sideMargin;
     }
 
+    /*---Setters and getters---*/
     public int getX() {
         return x;
     }

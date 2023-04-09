@@ -2,27 +2,34 @@ package no.uib.inf101.sem2.view;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import no.uib.inf101.sem2.controller.RacingController;
+import no.uib.inf101.sem2.model.GameState;
 import no.uib.inf101.sem2.model.RacingModel;
 
 public class Racing2DView extends JPanel implements ActionListener, java.awt.event.KeyListener {
   private Timer timer;
+  private boolean checkHeight;
+  private GameState gameState;
   private Graphics2D graphics2d;
+  private Rectangle2D.Double box;
   private RacingModel racingModel;
-  private boolean checkHeight = false;
+  private double centerX, centerY;
   private RacingController racingController;
   private String[][] tiles, backgroundTiles;
   private int x, y, rows, cols, width, height, sideMargin;
+  private int score, highScore, gameOverFontSize, gameStartedFontSize;
   private final int delayMs = 10;
   private final int tileWidth = 32;
   private final BufferedImage car = Inf101Graphics.loadImageFromResources("/car.png");
@@ -34,6 +41,8 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
 
   public Racing2DView(RacingModel racingModel, RacingController racingController) {
     this.racingModel = racingModel;
+    this.gameState = racingModel.getGameState();
+    this.checkHeight = false;
     this.racingController = racingController;
     this.rows = racingModel.getRows();
     this.cols = racingModel.getCols();
@@ -47,7 +56,6 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
     this.setPreferredSize(new Dimension(width, height));
     this.setBackground(Color.BLACK);
     this.addKeyListener(this);
-    this.sideMargin = (this.getWidth() - this.cols * this.tileWidth) / 2;
     this.timer = new Timer(delayMs, this);
     this.timer.start();
 
@@ -58,12 +66,27 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
   public void paint(Graphics graphics) {
     super.paint(graphics);
     this.graphics2d = (Graphics2D) graphics;
+    drawGame();
+  }
+
+  private void drawGame() {
     drawRoad(this.sideMargin, this.y);
     drawCar(x);
+    this.gameOverFontSize = (int) width / 8;
+    this.gameStartedFontSize = (int) width / 10;
+    this.centerX = this.getWidth() / 2;
+    this.centerY = this.getHeight() / 2;
+    this.box = new Rectangle2D.Double(0, 0, width, height);
+    if (this.gameState == GameState.GAME_STARTED) {
+      drawGameStarted();
+    }
+    if (this.gameState == GameState.GAME_OVER) {
+      drawGameOver();
+    }
   }
 
   private void drawRoad(int x, int y) {
-    int sideMargin = x;
+    int sideMargin = (this.getWidth() - this.cols * this.tileWidth) / 2;
     for (int row = rows - 1; row > 0; row--) {
       for (int col = 0; col < cols; col++) {
         if (backgroundTiles[row][col] == "roadTile") {
@@ -92,7 +115,32 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
 
   @Override
   public void actionPerformed(ActionEvent arg0) {
-    if (this.checkHeight) {
+    if (this.gameState == GameState.ACTIVE_GAME) {
+      drawActiveGame();
+    }
+    repaint();
+  }
+
+  /**
+   * Draws the "Game Started" message with instructions on how to start the game.
+   * 
+   * @param graphics2d the Graphics2D object used to draw the "Game Started"
+   *                   message
+   */
+  private void drawGameStarted() {
+    graphics2d.setColor(new Color(0, 0, 0, 128));
+    graphics2d.fill(box);
+    graphics2d.setColor(Color.BLUE);
+    graphics2d.setFont(new Font("Arial", Font.BOLD, gameStartedFontSize));
+    Inf101Graphics.drawCenteredString(graphics2d, "Press", centerX, centerY - gameStartedFontSize);
+    Inf101Graphics.drawCenteredString(graphics2d, "ENTER", centerX, centerY);
+    Inf101Graphics.drawCenteredString(graphics2d, "to start", centerX, centerY + gameStartedFontSize);
+  }
+
+  private void drawActiveGame() {
+    if (this.checkHeight == true)
+
+    {
       this.height = this.getHeight();
     }
     this.sideMargin = (this.getWidth() - this.cols * this.tileWidth) / 2;
@@ -101,7 +149,21 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
       this.y = this.height - this.tileWidth;
       this.checkHeight = true;
     }
-    repaint();
+  }
+
+  /**
+   * Draws the "Game Over" message with instructions on how to restart the game.
+   * 
+   * @param graphics2d the Graphics2D object used to draw the "Game Over" message
+   */
+  private void drawGameOver() {
+    graphics2d.setColor(new Color(0, 0, 0, 128));
+    graphics2d.fill(box);
+    graphics2d.setColor(Color.RED);
+    graphics2d.setFont(new Font("Arial", Font.BOLD, gameOverFontSize));
+    Inf101Graphics.drawCenteredString(graphics2d, "Game Over!", centerX, centerY);
+    graphics2d.setFont(new Font("Arial", Font.BOLD, gameOverFontSize / 2));
+    Inf101Graphics.drawCenteredString(graphics2d, "Press 'R' to restart", centerX, centerY + gameStartedFontSize);
   }
 
   @Override
@@ -110,9 +172,11 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
     racingController.setWindowWidth(this.getWidth());
     racingController.keyPressed(keyEvent);
     this.x = racingController.getX();
+    this.gameState = racingModel.getGameState();
     repaint();
   }
 
+  /*---Methods to comply with interfaces---*/
   @Override
   public void keyReleased(KeyEvent keyEvent) {
   }

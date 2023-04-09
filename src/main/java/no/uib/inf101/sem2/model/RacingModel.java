@@ -5,7 +5,7 @@ public class RacingModel {
     private RacingBoard racingBoard;
 
     public RacingModel(RacingBoard racingBoard) {
-        this.gameState = GameState.ACTIVE_GAME;
+        this.gameState = GameState.GAME_STARTED;
         this.racingBoard = racingBoard;
     }
 

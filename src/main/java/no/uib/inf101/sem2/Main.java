@@ -13,7 +13,7 @@ public class Main {
   public static void main(String[] args) {
     RacingBoard racingBoard = new RacingBoard(80, 19);
     RacingModel racingModel = new RacingModel(racingBoard);
-    RacingController racingController = new RacingController();
+    RacingController racingController = new RacingController(racingModel);
     Racing2DView racing2dView = new Racing2DView(racingModel, racingController);
     JFrame frame = new JFrame();
 
