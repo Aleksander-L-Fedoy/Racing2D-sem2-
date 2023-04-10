@@ -56,6 +56,7 @@ public class RacingBoard {
 
     }
 
+    /*---Getters---*/
     public String[][] getBackgroundTiles() {
         return backgroundTiles;
     }

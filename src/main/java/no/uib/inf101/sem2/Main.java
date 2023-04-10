@@ -11,7 +11,7 @@ public class Main {
   public static final String WINDOW_TITLE = "Racing 2D";
 
   public static void main(String[] args) {
-    RacingBoard racingBoard = new RacingBoard(80, 19);
+    RacingBoard racingBoard = new RacingBoard(80, 17);
     RacingModel racingModel = new RacingModel(racingBoard);
     RacingController racingController = new RacingController(racingModel);
     Racing2DView racing2dView = new Racing2DView(racingModel, racingController);
@@ -20,7 +20,7 @@ public class Main {
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.add(racing2dView);
     frame.pack();
-    frame.setTitle("Racing 2D");
+    frame.setTitle(WINDOW_TITLE);
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
   }

@@ -26,13 +26,16 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
   private Rectangle2D.Double box;
   private RacingModel racingModel;
   private double centerX, centerY;
+  private long nextObstacleSpawnTime;
   private RacingController racingController;
   private String[][] tiles, backgroundTiles;
+  private int obsticleCarXPos, obsticleCarYPos;
   private int x, y, rows, cols, width, height, sideMargin;
   private int score, highScore, gameOverFontSize, gameStartedFontSize;
   private final int delayMs = 10;
   private final int tileWidth = 32;
   private final BufferedImage car = Inf101Graphics.loadImageFromResources("/car.png");
+  private final BufferedImage blueCar = Inf101Graphics.loadImageFromResources("/blue_car.png");
   private final BufferedImage roadTile = Inf101Graphics.loadImageFromResources("/road_tile_v2.png");
   private final BufferedImage grassTile = Inf101Graphics.loadImageFromResources("/grass_tile_v2.png");
   private final BufferedImage apexTile = Inf101Graphics.loadImageFromResources("/apex_tile_v2.png");
@@ -58,6 +61,9 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
     this.addKeyListener(this);
     this.timer = new Timer(delayMs, this);
     this.timer.start();
+    this.obsticleCarXPos = this.x;
+    this.obsticleCarYPos = -200;
+    this.nextObstacleSpawnTime = (long) (Math.random() * 2000) + 2000;
 
     racingController.setX(this.x);
   }
@@ -71,7 +77,8 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
 
   private void drawGame() {
     drawRoad(this.sideMargin, this.y);
-    drawCar(x);
+    drawMainCar(x);
+    drawObsticleCars();
     this.gameOverFontSize = (int) width / 8;
     this.gameStartedFontSize = (int) width / 10;
     this.centerX = this.getWidth() / 2;
@@ -108,9 +115,15 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
     }
   }
 
-  public void drawCar(int x) {
+  private void drawMainCar(int x) {
     int y = this.height / 2;
     Inf101Graphics.drawImage(graphics2d, car, x, y, 1);
+  }
+
+  private void drawObsticleCars() {
+    int x = this.obsticleCarXPos;
+    int y = this.obsticleCarYPos;
+    Inf101Graphics.drawImage(graphics2d, blueCar, x, y, 1);
   }
 
   @Override
@@ -145,10 +158,23 @@ public class Racing2DView extends JPanel implements ActionListener, java.awt.eve
     }
     this.sideMargin = (this.getWidth() - this.cols * this.tileWidth) / 2;
     this.y += this.tileWidth / 5;
+    this.obsticleCarYPos += 8;
     if (this.y >= (this.height - this.tileWidth) * 2) {
       this.y = this.height - this.tileWidth;
       this.checkHeight = true;
     }
+
+    nextObstacleSpawnTime -= delayMs;
+    if (nextObstacleSpawnTime <= 0) {
+      obsticleCarXPos = (int) (Math.random() * (this.getWidth() - 2 * this.sideMargin - 2 * tileWidth)) + sideMargin;
+      obsticleCarYPos = -200;
+      nextObstacleSpawnTime = (long) (Math.random() * 2000) + 2000;
+    }
+
+    if (this.y == this.obsticleCarYPos && this.x == this.obsticleCarXPos) {
+      this.gameState = GameState.GAME_OVER;
+    }
+
   }
 
   /**
