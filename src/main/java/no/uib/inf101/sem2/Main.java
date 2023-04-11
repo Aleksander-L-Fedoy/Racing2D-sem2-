@@ -13,8 +13,8 @@ public class Main {
   public static void main(String[] args) {
     RacingBoard racingBoard = new RacingBoard(80, 17);
     RacingModel racingModel = new RacingModel(racingBoard);
-    RacingController racingController = new RacingController(racingModel);
-    Racing2DView racing2dView = new Racing2DView(racingModel, racingController);
+    Racing2DView racing2dView = new Racing2DView(racingModel);
+    new RacingController(racingModel, racing2dView);
     JFrame frame = new JFrame();
 
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

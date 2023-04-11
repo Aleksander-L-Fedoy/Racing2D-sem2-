@@ -1,12 +1,14 @@
 package no.uib.inf101.sem2.model;
 
 public class RacingModel {
+    private int obsticleCarYPos;
     private GameState gameState;
     private RacingBoard racingBoard;
 
     public RacingModel(RacingBoard racingBoard) {
         this.gameState = GameState.GAME_STARTED;
         this.racingBoard = racingBoard;
+        this.obsticleCarYPos = -200;
     }
 
     public String[][] getBackgroundTiles() {
@@ -28,13 +30,7 @@ public class RacingModel {
 
     public void reset() {
         this.gameState = GameState.GAME_STARTED;
-    }
-
-    /**
-     * Sets the game state to ACTIVE_GAME.
-     */
-    public void setGameStateToActive() {
-        this.gameState = GameState.ACTIVE_GAME;
+        this.obsticleCarYPos = -200;
     }
 
     public int getRows() {
@@ -43,6 +39,18 @@ public class RacingModel {
 
     public int getCols() {
         return racingBoard.getCols();
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
+    public int getObsticleCarYPos() {
+        return obsticleCarYPos;
+    }
+
+    public void setObsticleCarYPos(int obsticleCarYPos) {
+        this.obsticleCarYPos = obsticleCarYPos;
     }
 
 }
