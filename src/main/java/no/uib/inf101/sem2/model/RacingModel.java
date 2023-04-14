@@ -4,11 +4,15 @@ public class RacingModel {
     private int obsticleCarYPos;
     private GameState gameState;
     private RacingBoard racingBoard;
+    private int score;
+    private HighScoreHandler highScoreHandler;
 
     public RacingModel(RacingBoard racingBoard) {
         this.gameState = GameState.GAME_STARTED;
         this.racingBoard = racingBoard;
         this.obsticleCarYPos = -200;
+        this.score = 0;
+        this.highScoreHandler = new HighScoreHandler();
     }
 
     public String[][] getBackgroundTiles() {
@@ -53,4 +57,28 @@ public class RacingModel {
         this.obsticleCarYPos = obsticleCarYPos;
     }
 
+    /**
+     * Returns the current game score.
+     *
+     * @return The game score.
+     */
+    public int gameScore() {
+        return this.score;
+    }
+
+    /**
+     * Returns the high score.
+     *
+     * @return The high score.
+     */
+    public int highScore() {
+        return this.highScoreHandler.getHighscore();
+    }
+
+    public void updateScore() {
+        this.score += 1000;
+        if (score > highScoreHandler.getHighscore()) {
+            highScoreHandler.setHighscore(score);
+        }
+    }
 }

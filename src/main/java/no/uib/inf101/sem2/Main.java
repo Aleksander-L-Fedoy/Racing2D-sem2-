@@ -11,7 +11,7 @@ public class Main {
   public static final String WINDOW_TITLE = "Racing 2D";
 
   public static void main(String[] args) {
-    RacingBoard racingBoard = new RacingBoard(80, 17);
+    RacingBoard racingBoard = new RacingBoard(80, 23);
     RacingModel racingModel = new RacingModel(racingBoard);
     Racing2DView racing2dView = new Racing2DView(racingModel);
     new RacingController(racingModel, racing2dView);

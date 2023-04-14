@@ -12,7 +12,7 @@ import no.uib.inf101.sem2.model.GameState;
 import no.uib.inf101.sem2.model.RacingModel;
 
 public class Racing2DView extends JPanel {
-  private boolean checkHeight;
+  private boolean checkHeight, scoreAllreadyUpdated;
   private GameState gameState;
   private Graphics2D graphics2d;
   private Rectangle2D.Double box;
@@ -22,7 +22,7 @@ public class Racing2DView extends JPanel {
   private String[][] tiles, backgroundTiles;
   private int obsticleCarXPos, obsticleCarYPos;
   private int x, y, rows, cols, width, height, sideMargin;
-  private int score, highScore, gameOverFontSize, gameStartedFontSize;
+  private int score, highscore, gameOverFontSize, gameStartedFontSize;
   private final int delayMs = 10;
   private final int tileWidth = 32;
   private final BufferedImage car = Inf101Graphics.loadImageFromResources("/car.png");
@@ -37,6 +37,7 @@ public class Racing2DView extends JPanel {
     this.racingModel = racingModel;
     this.gameState = racingModel.getGameState();
     this.checkHeight = false;
+    this.scoreAllreadyUpdated = false;
     this.rows = racingModel.getRows();
     this.cols = racingModel.getCols();
     this.width = 1200;
@@ -45,7 +46,6 @@ public class Racing2DView extends JPanel {
     this.y = this.height - this.tileWidth;
     this.tiles = racingModel.getTiles();
     this.sideMargin = (this.width - this.cols * this.tileWidth) / 2;
-    System.out.println(sideMargin);
     this.backgroundTiles = racingModel.getBackgroundTiles();
     this.setFocusable(true);
     this.setPreferredSize(new Dimension(width, height));
@@ -66,6 +66,7 @@ public class Racing2DView extends JPanel {
     drawRoad(this.sideMargin, this.y);
     drawMainCar(x);
     drawObsticleCars();
+    drawScore();
     this.gameOverFontSize = (int) width / 8;
     this.gameStartedFontSize = (int) width / 10;
     this.centerX = this.getWidth() / 2;
@@ -129,25 +130,44 @@ public class Racing2DView extends JPanel {
     Inf101Graphics.drawCenteredString(graphics2d, "to start", centerX, centerY + gameStartedFontSize);
   }
 
-  public void drawActiveGame() {
+  public void activeGame() {
     this.gameState = racingModel.getGameState();
     if (this.checkHeight == true) {
       this.height = this.getHeight();
     }
     this.sideMargin = (this.getWidth() - this.cols * this.tileWidth) / 2;
-    this.y += this.tileWidth / 5;
+    this.y += this.tileWidth / 4;
     this.obsticleCarYPos += this.tileWidth / 5 - 2;
+    resetYPosGate();
+    nextObstacleSpawnTimer();
+    colisonDetector();
+    if (this.scoreAllreadyUpdated == false) {
+      if (this.obsticleCarYPos > this.y + 112) {
+        racingModel.updateScore();
+        scoreAllreadyUpdated = true;
+      }
+    }
+  }
+
+  private void resetYPosGate() {
     if (this.y >= (this.height - this.tileWidth) * 2) {
       this.y = this.height - this.tileWidth;
       this.checkHeight = true;
     }
+  }
+
+  private void nextObstacleSpawnTimer() {
     nextObstacleSpawnTime -= delayMs;
     if (nextObstacleSpawnTime <= 0) {
       System.out.println("Tss");
       obsticleCarXPos = (int) (Math.random() * (this.getWidth() - 2 * this.sideMargin - 2 * tileWidth)) + sideMargin;
       obsticleCarYPos = -200;
       nextObstacleSpawnTime = (long) (Math.random() * 2000) + 2000;
+      scoreAllreadyUpdated = false;
     }
+  }
+
+  private void colisonDetector() {
     if (this.x - 32 < this.obsticleCarXPos && this.obsticleCarXPos < this.x + 32) {
       int mainCarYPos = this.height / 2;
       if (mainCarYPos - 112 < obsticleCarYPos && obsticleCarYPos < mainCarYPos +
@@ -170,6 +190,21 @@ public class Racing2DView extends JPanel {
     Inf101Graphics.drawCenteredString(graphics2d, "Game Over!", centerX, centerY);
     graphics2d.setFont(new Font("Arial", Font.BOLD, gameOverFontSize / 2));
     Inf101Graphics.drawCenteredString(graphics2d, "Press 'R' to restart", centerX, centerY + gameStartedFontSize);
+  }
+
+  /**
+   * Draws the game score and the highscore on the screen.
+   *
+   * @param graphics2d the Graphics2D object used to draw the game score and
+   *                   highscore
+   */
+  public void drawScore() {
+    this.score = racingModel.gameScore();
+    this.highscore = racingModel.highScore();
+    graphics2d.setColor(Color.GREEN);
+    graphics2d.setFont(new Font("Arial", Font.BOLD, 14));
+    graphics2d.drawString("Highscore " + this.highscore, 20, 20);
+    graphics2d.drawString("Score " + this.score, 20, 40);
   }
 
   public void setX(int x) {
