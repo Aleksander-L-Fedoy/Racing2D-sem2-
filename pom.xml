@@ -22,9 +22,7 @@
         <app.version>1.0.0</app.version> <!-- version displayed in "about" -->
         <app.installer.macosx.type>dmg</app.installer.macosx.type> <!-- dmg, pkg -->
         <app.installer.windows.type>msi</app.installer.windows.type> <!-- msi, exe -->
-        <app.macosx.icon.path>src/main/logo/macosx/logo.icns</app.macosx.icon.path>
-        <app.windows.icon.path>src/main/logo/windows/logo.ico</app.windows.icon.path>
-
+      
         <!-- Library and plugin versions -->
         <junit.version>5.9.1</junit.version>
         <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
