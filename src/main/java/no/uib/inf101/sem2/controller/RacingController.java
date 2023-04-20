@@ -39,6 +39,7 @@ public class RacingController implements java.awt.event.KeyListener {
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (racingModel.getGameState() == GameState.GAME_STARTED) {
+            this.x = racing2DView.getXvalue();
             startedGame(keyEvent);
         }
         if (racingModel.getGameState() == GameState.GAME_OVER) {

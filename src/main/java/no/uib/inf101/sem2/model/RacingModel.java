@@ -76,7 +76,7 @@ public class RacingModel {
     }
 
     public void updateScore() {
-        this.score += 1000;
+        this.score += 100;
         if (score > highScoreHandler.getHighscore()) {
             highScoreHandler.setHighscore(score);
         }
