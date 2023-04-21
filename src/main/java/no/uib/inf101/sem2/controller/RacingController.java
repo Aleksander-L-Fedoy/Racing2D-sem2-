@@ -98,7 +98,7 @@ public class RacingController implements java.awt.event.KeyListener {
     private void clockTick(ActionEvent event) {
         this.windowWidth = racing2DView.getWidth();
         this.sideMargin = racing2DView.getSideMargin();
-        racing2DView.activeGame();
+        racing2DView.updateActiveGame();
         racing2DView.repaint();
     }
 

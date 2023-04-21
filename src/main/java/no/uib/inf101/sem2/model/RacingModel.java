@@ -1,7 +1,7 @@
 package no.uib.inf101.sem2.model;
 
 public class RacingModel {
-    private int obsticleCarYPos;
+    private int obstacleCarYPos;
     private GameState gameState;
     private RacingBoard racingBoard;
     private int score;
@@ -10,7 +10,7 @@ public class RacingModel {
     public RacingModel(RacingBoard racingBoard) {
         this.gameState = GameState.GAME_STARTED;
         this.racingBoard = racingBoard;
-        this.obsticleCarYPos = -200;
+        this.obstacleCarYPos = -200;
         this.score = 0;
         this.highScoreHandler = new HighScoreHandler();
     }
@@ -34,7 +34,7 @@ public class RacingModel {
 
     public void reset() {
         this.gameState = GameState.GAME_STARTED;
-        this.obsticleCarYPos = -200;
+        this.obstacleCarYPos = -200;
     }
 
     public int getRows() {
@@ -49,12 +49,16 @@ public class RacingModel {
         this.gameState = gameState;
     }
 
-    public int getObsticleCarYPos() {
-        return obsticleCarYPos;
+    public int getObstacleCarYPos() {
+        return obstacleCarYPos;
     }
 
-    public void setObsticleCarYPos(int obsticleCarYPos) {
-        this.obsticleCarYPos = obsticleCarYPos;
+    public void setObstacleCarYPos(int obsticleCarYPos) {
+        this.obstacleCarYPos = obsticleCarYPos;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
     /**

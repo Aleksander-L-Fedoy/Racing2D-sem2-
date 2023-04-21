@@ -1,7 +1,7 @@
 package no.uib.inf101.sem2.model;
 
 public class RacingBoard {
-    private final int rows;
+    private final int rows = 80;
     private final int cols;
     private final String grassTile = "grassTile";
     private final String roadTile = "roadTile";
@@ -10,8 +10,7 @@ public class RacingBoard {
     private String[][] backgroundTiles;
     private String[][] tiles;
 
-    public RacingBoard(int rows, int cols) {
-        this.rows = rows;
+    public RacingBoard(int cols) {
         this.cols = cols;
         this.backgroundTiles = new String[rows][cols];
         this.tiles = new String[rows][cols];

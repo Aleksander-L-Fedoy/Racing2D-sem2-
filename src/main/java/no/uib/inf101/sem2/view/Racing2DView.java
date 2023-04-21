@@ -20,9 +20,9 @@ public class Racing2DView extends JPanel {
   private double centerX, centerY;
   private long nextObstacleSpawnTime;
   private String[][] tiles, backgroundTiles;
-  private int obsticleCarXPos, obsticleCarYPos;
+  private int obstacleCarXPos, obstacleCarYPos;
   private int x, y, rows, cols, width, height, sideMargin;
-  private int score, highscore, gameOverFontSize, gameStartedFontSize;
+  private int score, highscore, gameOverFontSize, gameStartedFontSize, lives;
   private final int delayMs = 10;
   private final int tileWidth = 32;
   private final BufferedImage car = ViewHandler.loadImageFromResources("/car.png");
@@ -34,6 +34,7 @@ public class Racing2DView extends JPanel {
       .loadImageFromResources("/yellow_lane_seperator_v2.png");
 
   public Racing2DView(RacingModel racingModel) {
+    this.lives = 3;
     this.racingModel = racingModel;
     this.gameState = racingModel.getGameState();
     this.checkHeight = false;
@@ -50,8 +51,8 @@ public class Racing2DView extends JPanel {
     this.setFocusable(true);
     this.setPreferredSize(new Dimension(width, height));
     this.setBackground(Color.BLACK);
-    this.obsticleCarXPos = (int) (Math.random() * (this.getWidth() - 2 * this.sideMargin - 2 * tileWidth)) + sideMargin;
-    this.obsticleCarYPos = -200;
+    this.obstacleCarXPos = this.width / 2;
+    this.obstacleCarYPos = -200;
     this.nextObstacleSpawnTime = (long) (Math.random() * 2000) + 2000;
   }
 
@@ -62,7 +63,7 @@ public class Racing2DView extends JPanel {
     drawGame();
   }
 
-  public void drawGame() {
+  private void drawGame() {
     drawRoad(this.sideMargin, this.y);
     drawMainCar(this.x);
     drawObsticleCars();
@@ -108,8 +109,8 @@ public class Racing2DView extends JPanel {
   }
 
   private void drawObsticleCars() {
-    int x = this.obsticleCarXPos;
-    int y = this.obsticleCarYPos;
+    int x = this.obstacleCarXPos;
+    int y = this.obstacleCarYPos;
     ViewHandler.drawImage(graphics2d, blueCar, x, y, 1);
   }
 
@@ -129,7 +130,7 @@ public class Racing2DView extends JPanel {
     ViewHandler.drawCenteredString(graphics2d, "to start", centerX, centerY + gameStartedFontSize);
   }
 
-  public void activeGame() {
+  public void updateActiveGame() {
     this.gameState = racingModel.getGameState();
     if (this.gameState == GameState.ACTIVE_GAME) {
       if (this.checkHeight == true) {
@@ -137,20 +138,22 @@ public class Racing2DView extends JPanel {
       }
       this.sideMargin = (this.getWidth() - this.cols * this.tileWidth) / 2;
       this.y += this.tileWidth / 4;
-      this.obsticleCarYPos += this.tileWidth / 5 - 2;
+      this.obstacleCarYPos += this.tileWidth / 5 - 2;
       resetYPosGate();
       nextObstacleSpawnTimer();
       colisonDetector();
       if (this.scoreAllreadyUpdated == false) {
-        if (this.obsticleCarYPos > this.height / 2 + car.getHeight()) {
+        if (this.obstacleCarYPos > this.height / 2 + car.getHeight()) {
           racingModel.updateScore();
           scoreAllreadyUpdated = true;
         }
       }
     } else if (this.gameState == GameState.GAME_STARTED) {
       this.x = this.width / 2;
-      obsticleCarYPos = -200;
+      obstacleCarYPos = -200;
       nextObstacleSpawnTime = (long) (Math.random() * 2000) + 2000;
+      this.lives = 3;
+      racingModel.setScore(0);
     }
   }
 
@@ -163,9 +166,9 @@ public class Racing2DView extends JPanel {
 
   private void nextObstacleSpawnTimer() {
     nextObstacleSpawnTime -= delayMs;
-    if (nextObstacleSpawnTime <= 0) {
-      obsticleCarXPos = (int) (Math.random() * (this.getWidth() - 2 * this.sideMargin - 2 * tileWidth)) + sideMargin;
-      obsticleCarYPos = -200;
+    if (nextObstacleSpawnTime <= 0 && this.obstacleCarYPos > this.height) {
+      obstacleCarXPos = (int) (Math.random() * (this.getWidth() - 2 * this.sideMargin - 2 * tileWidth)) + sideMargin;
+      obstacleCarYPos = -200;
       nextObstacleSpawnTime = (long) (Math.random() * 2000) + 2000;
       scoreAllreadyUpdated = false;
     }
@@ -175,9 +178,14 @@ public class Racing2DView extends JPanel {
     Double margin = 10D;
     Rectangle2D mainCar = new Rectangle2D.Double(this.x + margin, this.height / 2 + margin, car.getWidth() - margin,
         car.getHeight() - margin);
-    Rectangle2D nextObstacleCar = new Rectangle2D.Double(this.obsticleCarXPos + margin, this.obsticleCarYPos + margin,
+    Rectangle2D nextObstacleCar = new Rectangle2D.Double(this.obstacleCarXPos + margin, this.obstacleCarYPos + margin,
         blueCar.getWidth() - margin, blueCar.getHeight() - margin);
     if (mainCar.intersects(nextObstacleCar)) {
+      this.lives--;
+      nextObstacleSpawnTime = -100;
+      this.obstacleCarYPos = this.height;
+    }
+    if (this.lives == 0) {
       racingModel.setGameState(GameState.GAME_OVER);
     }
   }
@@ -204,12 +212,23 @@ public class Racing2DView extends JPanel {
    *                   highscore
    */
   private void drawScore() {
-    this.score = racingModel.gameScore();
+    String heartString;
     this.highscore = racingModel.highScore();
+    this.score = racingModel.gameScore();
     graphics2d.setColor(Color.GREEN);
     graphics2d.setFont(new Font("Arial", Font.BOLD, 14));
     graphics2d.drawString("Highscore " + this.highscore, 20, 20);
     graphics2d.drawString("Score " + this.score, 20, 40);
+    if (this.lives == 3) {
+      heartString = "♥ ♥ ♥";
+    } else if (this.lives == 2) {
+      heartString = "♥ ♥";
+    } else if (this.lives == 1) {
+      heartString = "♥";
+    } else {
+      heartString = "";
+    }
+    graphics2d.drawString(heartString, 20, 60);
   }
 
   /*---Setters and getters---*/
