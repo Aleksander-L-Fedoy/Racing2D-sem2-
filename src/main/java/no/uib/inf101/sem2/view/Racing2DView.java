@@ -1,59 +1,58 @@
 package no.uib.inf101.sem2.view;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Color;
 import java.awt.Graphics;
+
+import javax.swing.JPanel;
+
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import javax.swing.JPanel;
+
 import no.uib.inf101.sem2.model.GameState;
 import no.uib.inf101.sem2.model.RacingModel;
 
 public class Racing2DView extends JPanel {
-  private boolean checkHeight, scoreAllreadyUpdated;
-  private GameState gameState;
+  private boolean checkHeight;
   private Graphics2D graphics2d;
-  private Rectangle2D.Double box;
   private RacingModel racingModel;
-  private double centerX, centerY;
-  private long nextObstacleSpawnTime;
-  private String[][] tiles, backgroundTiles;
-  private int obstacleCarXPos, obstacleCarYPos;
-  private int x, y, rows, cols, width, height, sideMargin;
-  private int score, highscore, gameOverFontSize, gameStartedFontSize, lives;
-  private final int delayMs = 10;
-  private final int tileWidth = 32;
-  private final BufferedImage car = ViewHandler.loadImageFromResources("/car.png");
-  private final BufferedImage blueCar = ViewHandler.loadImageFromResources("/blue_car.png");
-  private final BufferedImage roadTile = ViewHandler.loadImageFromResources("/road_tile_v2.png");
-  private final BufferedImage grassTile = ViewHandler.loadImageFromResources("/grass_tile_v2.png");
-  private final BufferedImage apexTile = ViewHandler.loadImageFromResources("/apex_tile_v2.png");
-  private final BufferedImage yellowLaneSeperatorTile = ViewHandler
+  private int mainCarXPos, obstacleCarXPos;
+  private int tileYPos, screenWitdh, screenHeight, sideMargin;
+
+  private final int ROWS, COLS;
+  private final int TILEWIDTH = 32;
+  private final Tile[][] tiles, backgroundTiles;
+  private final Font SCORE_FONT = new Font("Arial", Font.BOLD, 14);
+  private final Color SEMI_TRANSPARENT_BLACK = new Color(0, 0, 0, 128);
+  private final BufferedImage MAINCAR = ViewHandler.loadImageFromResources("/car.png");
+  private final BufferedImage BLUECAR = ViewHandler.loadImageFromResources("/blue_car.png");
+  private final BufferedImage ROADTILE = ViewHandler.loadImageFromResources("/road_tile_v2.png");
+  private final BufferedImage GRASSTILE = ViewHandler.loadImageFromResources("/grass_tile_v2.png");
+  private final BufferedImage APEXTILE = ViewHandler.loadImageFromResources("/apex_tile_v2.png");
+  private final BufferedImage LANESEPERATORTILE = ViewHandler
       .loadImageFromResources("/yellow_lane_seperator_v2.png");
 
   public Racing2DView(RacingModel racingModel) {
-    this.lives = 3;
     this.racingModel = racingModel;
-    this.gameState = racingModel.getGameState();
+
+    this.screenWitdh = 1200;
+    this.screenHeight = 800;
     this.checkHeight = false;
-    this.scoreAllreadyUpdated = false;
-    this.rows = racingModel.getRows();
-    this.cols = racingModel.getCols();
-    this.width = 1200;
-    this.height = 800;
-    this.x = this.width / 2;
-    this.y = this.height - this.tileWidth;
+
+    this.ROWS = racingModel.getRows();
+    this.COLS = racingModel.getCols();
     this.tiles = racingModel.getTiles();
-    this.sideMargin = (this.width - this.cols * this.tileWidth) / 2;
+    this.mainCarXPos = this.screenWitdh / 2;
+    this.obstacleCarXPos = this.screenWitdh / 2;
+    this.tileYPos = this.screenHeight - this.TILEWIDTH;
     this.backgroundTiles = racingModel.getBackgroundTiles();
-    this.setFocusable(true);
-    this.setPreferredSize(new Dimension(width, height));
+    this.sideMargin = (this.screenWitdh - this.COLS * this.TILEWIDTH) / 2;
+
     this.setBackground(Color.BLACK);
-    this.obstacleCarXPos = this.width / 2;
-    this.obstacleCarYPos = -200;
-    this.nextObstacleSpawnTime = (long) (Math.random() * 2000) + 2000;
+    this.setFocusable(true);
+    this.setPreferredSize(new Dimension(screenWitdh, screenHeight));
   }
 
   @Override
@@ -64,54 +63,53 @@ public class Racing2DView extends JPanel {
   }
 
   private void drawGame() {
-    drawRoad(this.sideMargin, this.y);
-    drawMainCar(this.x);
+    drawRoad();
+    drawMainCar();
     drawObsticleCars();
     drawScore();
-    this.gameOverFontSize = (int) width / 8;
-    this.gameStartedFontSize = (int) width / 10;
-    this.centerX = this.getWidth() / 2;
-    this.centerY = this.getHeight() / 2;
-    this.box = new Rectangle2D.Double(0, 0, width, height);
-    if (this.gameState == GameState.GAME_STARTED) {
+    GameState gameState = racingModel.getGameState();
+    if (gameState == GameState.GAME_STARTED) {
       drawGameStarted();
-    } else if (this.gameState == GameState.GAME_OVER) {
+    } else if (gameState == GameState.GAME_OVER) {
       drawGameOver();
     }
   }
 
-  private void drawRoad(int x, int y) {
-    int sideMargin = (this.getWidth() - this.cols * this.tileWidth) / 2;
-    for (int row = rows - 1; row > 0; row--) {
-      for (int col = 0; col < cols; col++) {
-        if (backgroundTiles[row][col] == "roadTile") {
-          ViewHandler.drawImage(graphics2d, roadTile, x, y, 0.5);
+  private void drawRoad() {
+    int sideMargin = (this.getWidth() - this.COLS * this.TILEWIDTH) / 2;
+    int x = sideMargin;
+    int y = this.tileYPos;
+    for (int row = ROWS - 1; row > 0; row--) {
+      for (int col = 0; col < COLS; col++) {
+        if (backgroundTiles[row][col] == Tile.ROADTILE) {
+          ViewHandler.drawImage(graphics2d, ROADTILE, x, y, 0.5);
         }
-        if (backgroundTiles[row][col] == "grassTile") {
-          ViewHandler.drawImage(graphics2d, grassTile, x, y, 0.5);
+        if (backgroundTiles[row][col] == Tile.GRASSTILE) {
+          ViewHandler.drawImage(graphics2d, GRASSTILE, x, y, 0.5);
         }
-        if (tiles[row][col] == "apexTile") {
-          ViewHandler.drawImage(graphics2d, apexTile, x, y, 0.5);
+        if (tiles[row][col] == Tile.APEXTILE) {
+          ViewHandler.drawImage(graphics2d, APEXTILE, x, y, 0.5);
         }
-        if (tiles[row][col] == "yellowLaneSeperatorTile") {
-          ViewHandler.drawImage(graphics2d, yellowLaneSeperatorTile, x, y, 0.5);
+        if (tiles[row][col] == Tile.LANESEPERATORTILE) {
+          ViewHandler.drawImage(graphics2d, LANESEPERATORTILE, x, y, 0.5);
         }
-        x += this.tileWidth;
+        x += this.TILEWIDTH;
       }
-      y -= this.tileWidth;
+      y -= this.TILEWIDTH;
       x = sideMargin;
     }
   }
 
-  private void drawMainCar(int x) {
-    int y = this.height / 2;
-    ViewHandler.drawImage(graphics2d, car, x, y, 1);
+  private void drawMainCar() {
+    int x = this.mainCarXPos;
+    int y = this.screenHeight / 2;
+    ViewHandler.drawImage(graphics2d, MAINCAR, x, y, 1);
   }
 
   private void drawObsticleCars() {
     int x = this.obstacleCarXPos;
-    int y = this.obstacleCarYPos;
-    ViewHandler.drawImage(graphics2d, blueCar, x, y, 1);
+    int y = racingModel.getObstacleCarYPos();
+    ViewHandler.drawImage(graphics2d, BLUECAR, x, y, 1);
   }
 
   /**
@@ -121,7 +119,11 @@ public class Racing2DView extends JPanel {
    *                   message
    */
   private void drawGameStarted() {
-    graphics2d.setColor(new Color(0, 0, 0, 128));
+    int gameStartedFontSize = (int) screenWitdh / 10;
+    int centerX = this.screenWitdh / 2;
+    int centerY = this.screenHeight / 2;
+    Rectangle2D box = new Rectangle2D.Double(0, 0, this.screenWitdh, this.screenHeight);
+    graphics2d.setColor(SEMI_TRANSPARENT_BLACK);
     graphics2d.fill(box);
     graphics2d.setColor(Color.BLUE);
     graphics2d.setFont(new Font("Arial", Font.BOLD, gameStartedFontSize));
@@ -131,63 +133,59 @@ public class Racing2DView extends JPanel {
   }
 
   public void updateActiveGame() {
-    this.gameState = racingModel.getGameState();
-    if (this.gameState == GameState.ACTIVE_GAME) {
-      if (this.checkHeight == true) {
-        this.height = this.getHeight();
-      }
-      this.sideMargin = (this.getWidth() - this.cols * this.tileWidth) / 2;
-      this.y += this.tileWidth / 4;
-      this.obstacleCarYPos += this.tileWidth / 5 - 2;
-      resetYPosGate();
+    GameState gameState = racingModel.getGameState();
+    if (gameState == GameState.ACTIVE_GAME) {
+      this.sideMargin = (this.getWidth() - this.COLS * this.TILEWIDTH) / 2;
+      this.tileYPos += this.TILEWIDTH / 4;
+      racingModel.increaseObstacleCarYPos(this.TILEWIDTH / 5 - 2);
+      tileBoardLoop();
       nextObstacleSpawnTimer();
       colisonDetector();
-      if (this.scoreAllreadyUpdated == false) {
-        if (this.obstacleCarYPos > this.height / 2 + car.getHeight()) {
+      if (this.checkHeight == true) {
+        this.screenHeight = this.getHeight();
+      }
+      if (!racingModel.isScoreAllreadyUpdated()) {
+        if (racingModel.getObstacleCarYPos() > this.screenHeight / 2 + MAINCAR.getHeight()) {
           racingModel.updateScore();
-          scoreAllreadyUpdated = true;
+          racingModel.setScoreAllreadyUpdated(true);
         }
       }
-    } else if (this.gameState == GameState.GAME_STARTED) {
-      this.x = this.width / 2;
-      obstacleCarYPos = -200;
-      nextObstacleSpawnTime = (long) (Math.random() * 2000) + 2000;
-      this.lives = 3;
+    } else if (gameState == GameState.GAME_STARTED) {
+      this.mainCarXPos = this.screenWitdh / 2;
+      racingModel.setObstacleCarYPos(-200);
+      racingModel.resetNextObstacleSpawnTime();
+      racingModel.setLives(3);
       racingModel.setScore(0);
     }
   }
 
-  private void resetYPosGate() {
-    if (this.y >= (this.height - this.tileWidth) * 2) {
-      this.y = this.height - this.tileWidth;
+  private void tileBoardLoop() {
+    if (this.tileYPos >= (this.screenHeight - this.TILEWIDTH) * 2) {
+      this.tileYPos = this.screenHeight - this.TILEWIDTH;
       this.checkHeight = true;
     }
   }
 
   private void nextObstacleSpawnTimer() {
-    nextObstacleSpawnTime -= delayMs;
-    if (nextObstacleSpawnTime <= 0 && this.obstacleCarYPos > this.height) {
-      obstacleCarXPos = (int) (Math.random() * (this.getWidth() - 2 * this.sideMargin - 2 * tileWidth)) + sideMargin;
-      obstacleCarYPos = -200;
-      nextObstacleSpawnTime = (long) (Math.random() * 2000) + 2000;
-      scoreAllreadyUpdated = false;
+    if (racingModel.spawnObstacleCar(this.screenHeight)) {
+      obstacleCarXPos = (int) (Math.random() * (this.getWidth() - 2 * this.sideMargin - 2 * TILEWIDTH)) + sideMargin;
     }
   }
 
   private void colisonDetector() {
     Double margin = 10D;
-    Rectangle2D mainCar = new Rectangle2D.Double(this.x + margin, this.height / 2 + margin, car.getWidth() - margin,
-        car.getHeight() - margin);
-    Rectangle2D nextObstacleCar = new Rectangle2D.Double(this.obstacleCarXPos + margin, this.obstacleCarYPos + margin,
-        blueCar.getWidth() - margin, blueCar.getHeight() - margin);
+    Rectangle2D mainCar = new Rectangle2D.Double(this.mainCarXPos + margin, this.screenHeight / 2 + margin,
+        MAINCAR.getWidth() - margin,
+        MAINCAR.getHeight() - margin);
+    Rectangle2D nextObstacleCar = new Rectangle2D.Double(this.obstacleCarXPos + margin,
+        racingModel.getObstacleCarYPos() + margin,
+        BLUECAR.getWidth() - margin, BLUECAR.getHeight() - margin);
     if (mainCar.intersects(nextObstacleCar)) {
-      this.lives--;
-      nextObstacleSpawnTime = -100;
-      this.obstacleCarYPos = this.height;
+      racingModel.reduceLives();
+      racingModel.setNextObstacleSpawnTime(-100);
+      racingModel.setObstacleCarYPos(this.screenHeight);
     }
-    if (this.lives == 0) {
-      racingModel.setGameState(GameState.GAME_OVER);
-    }
+
   }
 
   /**
@@ -196,13 +194,18 @@ public class Racing2DView extends JPanel {
    * @param graphics2d the Graphics2D object used to draw the "Game Over" message
    */
   private void drawGameOver() {
-    graphics2d.setColor(new Color(0, 0, 0, 128));
+    int gameOverBigFontSize = (int) screenWitdh / 8;
+    int gameOverSmallFontSize = (int) screenWitdh / 10;
+    int centerX = this.screenWitdh / 2;
+    int centerY = this.screenHeight / 2;
+    Rectangle2D box = new Rectangle2D.Double(0, 0, this.screenWitdh, this.screenHeight);
+    graphics2d.setColor(SEMI_TRANSPARENT_BLACK);
     graphics2d.fill(box);
     graphics2d.setColor(Color.RED);
-    graphics2d.setFont(new Font("Arial", Font.BOLD, gameOverFontSize));
+    graphics2d.setFont(new Font("Arial", Font.BOLD, gameOverBigFontSize));
     ViewHandler.drawCenteredString(graphics2d, "Game Over!", centerX, centerY);
-    graphics2d.setFont(new Font("Arial", Font.BOLD, gameOverFontSize / 2));
-    ViewHandler.drawCenteredString(graphics2d, "Press 'R' to restart", centerX, centerY + gameStartedFontSize);
+    graphics2d.setFont(new Font("Arial", Font.BOLD, gameOverBigFontSize / 2));
+    ViewHandler.drawCenteredString(graphics2d, "Press 'R' to restart", centerX, centerY + gameOverSmallFontSize);
   }
 
   /**
@@ -212,18 +215,17 @@ public class Racing2DView extends JPanel {
    *                   highscore
    */
   private void drawScore() {
-    String heartString;
-    this.highscore = racingModel.highScore();
-    this.score = racingModel.gameScore();
     graphics2d.setColor(Color.GREEN);
-    graphics2d.setFont(new Font("Arial", Font.BOLD, 14));
-    graphics2d.drawString("Highscore " + this.highscore, 20, 20);
-    graphics2d.drawString("Score " + this.score, 20, 40);
-    if (this.lives == 3) {
+    graphics2d.setFont(SCORE_FONT);
+    graphics2d.drawString("Highscore " + racingModel.getHighScore(), 20, 20);
+    graphics2d.drawString("Score " + racingModel.getGameScore(), 20, 40);
+    int lives = racingModel.getLives();
+    String heartString;
+    if (lives == 3) {
       heartString = "♥ ♥ ♥";
-    } else if (this.lives == 2) {
+    } else if (lives == 2) {
       heartString = "♥ ♥";
-    } else if (this.lives == 1) {
+    } else if (lives == 1) {
       heartString = "♥";
     } else {
       heartString = "";
@@ -232,12 +234,12 @@ public class Racing2DView extends JPanel {
   }
 
   /*---Setters and getters---*/
-  public void setX(int x) {
-    this.x = x;
+  public void setMainCarXPos(int x) {
+    this.mainCarXPos = x;
   }
 
   public int getXvalue() {
-    return x;
+    return mainCarXPos;
   }
 
   public int getSideMargin() {

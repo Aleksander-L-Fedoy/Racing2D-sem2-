@@ -1,19 +1,17 @@
 package no.uib.inf101.sem2.model;
 
+import no.uib.inf101.sem2.view.Tile;
+
 public class RacingBoard {
     private final int rows = 80;
     private final int cols;
-    private final String grassTile = "grassTile";
-    private final String roadTile = "roadTile";
-    private final String apexTile = "apexTile";
-    private final String yellowLaneSeperatorTile = "yellowLaneSeperatorTile";
-    private String[][] backgroundTiles;
-    private String[][] tiles;
+    private Tile[][] backgroundTiles;
+    private Tile[][] tiles;
 
     public RacingBoard(int cols) {
         this.cols = cols;
-        this.backgroundTiles = new String[rows][cols];
-        this.tiles = new String[rows][cols];
+        this.backgroundTiles = new Tile[rows][cols];
+        this.tiles = new Tile[rows][cols];
 
         initializeBackground();
         initializeTiles();
@@ -24,9 +22,9 @@ public class RacingBoard {
             for (int row = 0; row < rows; row++) {
                 for (int col = 0; col < cols; col++) {
                     if (col == 0 || col + 1 == cols) {
-                        this.backgroundTiles[row][col] = grassTile;
+                        this.backgroundTiles[row][col] = Tile.GRASSTILE;
                     } else {
-                        this.backgroundTiles[row][col] = roadTile;
+                        this.backgroundTiles[row][col] = Tile.ROADTILE;
                     }
                 }
             }
@@ -41,10 +39,10 @@ public class RacingBoard {
             for (int row = 0; row < rows; row++) {
                 for (int col = 0; col < cols; col++) {
                     if (col == 1 || col + 2 == cols) {
-                        this.tiles[row][col] = apexTile;
+                        this.tiles[row][col] = Tile.APEXTILE;
                     }
                     if (col == cols / 2 && row % 2 == 0) {
-                        this.tiles[row][col] = yellowLaneSeperatorTile;
+                        this.tiles[row][col] = Tile.LANESEPERATORTILE;
                     }
                 }
             }
@@ -56,11 +54,11 @@ public class RacingBoard {
     }
 
     /*---Getters---*/
-    public String[][] getBackgroundTiles() {
+    public Tile[][] getBackgroundTiles() {
         return backgroundTiles;
     }
 
-    public String[][] getTiles() {
+    public Tile[][] getTiles() {
         return tiles;
     }
 

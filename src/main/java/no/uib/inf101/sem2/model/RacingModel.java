@@ -1,48 +1,85 @@
 package no.uib.inf101.sem2.model;
 
+import no.uib.inf101.sem2.view.Tile;
+
 public class RacingModel {
-    private int obstacleCarYPos;
     private GameState gameState;
-    private RacingBoard racingBoard;
-    private int score;
-    private HighScoreHandler highScoreHandler;
+    private long nextObstacleSpawnTime;
+    private boolean scoreAllreadyUpdated;
+    private int obstacleCarYPos, score, lives;
 
+    private final int DELAY_MS = 10;
+    private final RacingBoard RACINGBOARD;
+    private final HighScoreHandler HIGHSCOREHANDLER = new HighScoreHandler();
+
+    // Constructor
     public RacingModel(RacingBoard racingBoard) {
-        this.gameState = GameState.GAME_STARTED;
-        this.racingBoard = racingBoard;
-        this.obstacleCarYPos = -200;
+        this.RACINGBOARD = racingBoard;
         this.score = 0;
-        this.highScoreHandler = new HighScoreHandler();
+        this.lives = 3;
+        this.obstacleCarYPos = -200;
+        this.scoreAllreadyUpdated = false;
+        this.gameState = GameState.GAME_STARTED;
     }
 
-    public String[][] getBackgroundTiles() {
-        return racingBoard.getBackgroundTiles();
-    }
-
-    public String[][] getTiles() {
-        return racingBoard.getTiles();
-    }
-
-    /**
-     * Returns the current state of the game.
-     *
-     * @return The current game state.
-     */
-    public GameState getGameState() {
-        return this.gameState;
-    }
-
+    // Game logic methods
     public void reset() {
         this.gameState = GameState.GAME_STARTED;
         this.obstacleCarYPos = -200;
     }
 
+    public void increaseObstacleCarYPos(int deltaY) {
+        this.obstacleCarYPos += deltaY;
+    }
+
+    public void reduceLives() {
+        this.lives--;
+        if (this.lives == 0) {
+            this.gameState = GameState.GAME_OVER;
+        }
+    }
+
+    public void resetNextObstacleSpawnTime() {
+        this.nextObstacleSpawnTime = (long) (Math.random() * 2000) + 2000;
+    }
+
+    public boolean spawnObstacleCar(int screenHeight) {
+        nextObstacleSpawnTime -= DELAY_MS;
+        if (nextObstacleSpawnTime <= 0 && this.obstacleCarYPos > screenHeight) {
+            resetNextObstacleSpawnTime();
+            this.obstacleCarYPos = -200;
+            this.scoreAllreadyUpdated = false;
+            return true;
+        }
+        return false;
+    }
+
+    public void updateScore() {
+        this.score += 100;
+        if (score > HIGHSCOREHANDLER.getHighscore()) {
+            HIGHSCOREHANDLER.setHighscore(score);
+        }
+    }
+
+    // Setters and getters
+    public Tile[][] getBackgroundTiles() {
+        return RACINGBOARD.getBackgroundTiles();
+    }
+
+    public Tile[][] getTiles() {
+        return RACINGBOARD.getTiles();
+    }
+
+    public GameState getGameState() {
+        return this.gameState;
+    }
+
     public int getRows() {
-        return racingBoard.getRows();
+        return RACINGBOARD.getRows();
     }
 
     public int getCols() {
-        return racingBoard.getCols();
+        return RACINGBOARD.getCols();
     }
 
     public void setGameState(GameState gameState) {
@@ -61,28 +98,36 @@ public class RacingModel {
         this.score = score;
     }
 
-    /**
-     * Returns the current game score.
-     *
-     * @return The game score.
-     */
-    public int gameScore() {
+    public int getGameScore() {
         return this.score;
     }
 
-    /**
-     * Returns the high score.
-     *
-     * @return The high score.
-     */
-    public int highScore() {
-        return this.highScoreHandler.getHighscore();
+    public int getHighScore() {
+        return this.HIGHSCOREHANDLER.getHighscore();
     }
 
-    public void updateScore() {
-        this.score += 100;
-        if (score > highScoreHandler.getHighscore()) {
-            highScoreHandler.setHighscore(score);
-        }
+    public int getLives() {
+        return lives;
     }
+
+    public void setLives(int lives) {
+        this.lives = lives;
+    }
+
+    public long getNextObstacleSpawnTime() {
+        return nextObstacleSpawnTime;
+    }
+
+    public void setNextObstacleSpawnTime(long nextObstacleSpawnTime) {
+        this.nextObstacleSpawnTime = nextObstacleSpawnTime;
+    }
+
+    public boolean isScoreAllreadyUpdated() {
+        return scoreAllreadyUpdated;
+    }
+
+    public void setScoreAllreadyUpdated(boolean scoreAllreadyUpdated) {
+        this.scoreAllreadyUpdated = scoreAllreadyUpdated;
+    }
+
 }

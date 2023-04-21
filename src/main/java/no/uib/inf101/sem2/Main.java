@@ -15,8 +15,8 @@ public class Main {
     RacingModel racingModel = new RacingModel(racingBoard);
     Racing2DView racing2dView = new Racing2DView(racingModel);
     new RacingController(racingModel, racing2dView);
-    JFrame frame = new JFrame();
 
+    JFrame frame = new JFrame();
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.add(racing2dView);
     frame.pack();
