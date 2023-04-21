@@ -1,12 +1,12 @@
 package no.uib.inf101.sem2.controller;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
 import javax.swing.Timer;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.ActionEvent;
-
-import no.uib.inf101.sem2.model.GameState;
 import no.uib.inf101.sem2.midi.SongHandler;
+import no.uib.inf101.sem2.model.GameState;
 import no.uib.inf101.sem2.model.RacingModel;
 import no.uib.inf101.sem2.view.Racing2DView;
 
@@ -35,10 +35,11 @@ public class RacingController implements java.awt.event.KeyListener {
         this.sideMargin = racing2DView.getSideMargin();
     }
 
+    /*--- KeyListener methods ---*/
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (RACINGMODEL.getGameState() == GameState.GAME_STARTED) {
-            this.mainCarXPos = RACING2DVIEW.getXvalue();
+            this.mainCarXPos = RACING2DVIEW.getMainCarXPos();
             startedGame(keyEvent);
         }
         if (RACINGMODEL.getGameState() == GameState.GAME_OVER) {
@@ -49,11 +50,18 @@ public class RacingController implements java.awt.event.KeyListener {
         }
     }
 
-    /**
-     * Handles key events when the game has started but is not yet active.
-     *
-     * @param keyEvent The key event that occurred.
-     */
+    /*--- Methods to comply with super class ---*/
+    @Override
+    public void keyReleased(KeyEvent arg0) {
+        this.activeKey = -1;
+    }
+
+    @Override
+    public void keyTyped(KeyEvent arg0) {
+    }
+    /*--- Ends here ---*/
+
+    /*--- Private helper methods ---*/
     private void startedGame(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
             this.RACINGMODEL.setGameState(GameState.ACTIVE_GAME);
@@ -73,19 +81,14 @@ public class RacingController implements java.awt.event.KeyListener {
         RACING2DVIEW.setMainCarXPos(mainCarXPos);
     }
 
-    /**
-     * Handles key events when the game is over.
-     *
-     * @param keyEvent The key event that occurred.
-     */
     private void endedGame(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_R) {
             RACINGMODEL.reset();
         }
     }
 
-    private boolean noCollision(int x) {
-        return x > sideMargin && x + CARWIDTH < windowWidth - sideMargin;
+    private boolean noCollision(int nextMainCarXPos) {
+        return nextMainCarXPos > sideMargin && nextMainCarXPos + CARWIDTH < windowWidth - sideMargin;
     }
 
     private void clockTick(ActionEvent event) {
@@ -97,15 +100,4 @@ public class RacingController implements java.awt.event.KeyListener {
         RACING2DVIEW.updateActiveGame();
         RACING2DVIEW.repaint();
     }
-
-    /*---Methods to comply with super class---*/
-    @Override
-    public void keyReleased(KeyEvent arg0) {
-        this.activeKey = -1;
-    }
-
-    @Override
-    public void keyTyped(KeyEvent arg0) {
-    }
-
 }

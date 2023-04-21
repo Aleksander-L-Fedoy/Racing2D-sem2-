@@ -238,7 +238,7 @@ public class Racing2DView extends JPanel {
     this.mainCarXPos = x;
   }
 
-  public int getXvalue() {
+  public int getMainCarXPos() {
     return mainCarXPos;
   }
 

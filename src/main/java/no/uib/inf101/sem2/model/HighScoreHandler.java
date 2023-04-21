@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class HighScoreHandler {
-    private static final String FILENAME = "src/main/java/no/uib/inf101/sem2/model/highscore.txt";
+    private final String FILENAME = "src/main/java/no/uib/inf101/sem2/model/highscore.txt";
     private int highscore = 0;
 
     /**

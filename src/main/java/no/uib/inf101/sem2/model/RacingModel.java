@@ -12,7 +12,6 @@ public class RacingModel {
     private final RacingBoard RACINGBOARD;
     private final HighScoreHandler HIGHSCOREHANDLER = new HighScoreHandler();
 
-    // Constructor
     public RacingModel(RacingBoard racingBoard) {
         this.RACINGBOARD = racingBoard;
         this.score = 0;
@@ -22,7 +21,7 @@ public class RacingModel {
         this.gameState = GameState.GAME_STARTED;
     }
 
-    // Game logic methods
+    /*---Game logic methods---*/
     public void reset() {
         this.gameState = GameState.GAME_STARTED;
         this.obstacleCarYPos = -200;
@@ -61,7 +60,7 @@ public class RacingModel {
         }
     }
 
-    // Setters and getters
+    /*---Setters and getters---*/
     public Tile[][] getBackgroundTiles() {
         return RACINGBOARD.getBackgroundTiles();
     }

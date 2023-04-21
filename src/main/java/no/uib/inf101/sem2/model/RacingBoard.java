@@ -3,18 +3,21 @@ package no.uib.inf101.sem2.model;
 import no.uib.inf101.sem2.view.Tile;
 
 public class RacingBoard {
-    private final int rows = 80;
-    private final int cols;
-    private Tile[][] backgroundTiles;
-    private Tile[][] tiles;
+    private final int rows, cols;
+    private final Tile[][] tiles, backgroundTiles;
 
-    public RacingBoard(int cols) {
-        this.cols = cols;
-        this.backgroundTiles = new Tile[rows][cols];
-        this.tiles = new Tile[rows][cols];
+    public RacingBoard(int cols) throws IllegalArgumentException {
+        if (cols < 5) {
+            throw new IllegalArgumentException("Column size must be at least 5");
+        } else {
+            this.rows = 80;
+            this.cols = cols;
+            this.backgroundTiles = new Tile[rows][cols];
+            this.tiles = new Tile[rows][cols];
 
-        initializeBackground();
-        initializeTiles();
+            initializeBackground();
+            initializeTiles();
+        }
     }
 
     private boolean initializeBackground() {
