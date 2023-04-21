@@ -62,6 +62,12 @@ public class Racing2DView extends JPanel {
     drawGame();
   }
 
+  /**
+   * Draws the game components on the screen.
+   * Calls the drawRoad, drawMainCar, drawObsticleCars, drawScore, and
+   * drawGameStarted/drawGameOver methods
+   * based on the game state.
+   */
   private void drawGame() {
     drawRoad();
     drawMainCar();
@@ -75,6 +81,9 @@ public class Racing2DView extends JPanel {
     }
   }
 
+  /**
+   * Helper method that draws the road tiles on the screen.
+   */
   private void drawRoad() {
     int sideMargin = (this.getWidth() - this.COLS * this.TILEWIDTH) / 2;
     int x = sideMargin;
@@ -100,12 +109,18 @@ public class Racing2DView extends JPanel {
     }
   }
 
+  /**
+   * Helper method that draws the main car on the screen.
+   */
   private void drawMainCar() {
     int x = this.mainCarXPos;
     int y = this.screenHeight / 2;
     ViewHandler.drawImage(graphics2d, MAINCAR, x, y, 1);
   }
 
+  /**
+   * Helper method that draws the obstacle cars on the screen.
+   */
   private void drawObsticleCars() {
     int x = this.obstacleCarXPos;
     int y = racingModel.getObstacleCarYPos();
@@ -113,10 +128,8 @@ public class Racing2DView extends JPanel {
   }
 
   /**
-   * Draws the "Game Started" message with instructions on how to start the game.
-   * 
-   * @param graphics2d the Graphics2D object used to draw the "Game Started"
-   *                   message
+   * Helper method that draws the "Game Started" message with instructions on how
+   * to start the game.
    */
   private void drawGameStarted() {
     int gameStartedFontSize = (int) screenWitdh / 10;
@@ -132,6 +145,9 @@ public class Racing2DView extends JPanel {
     ViewHandler.drawCenteredString(graphics2d, "to start", centerX, centerY + gameStartedFontSize);
   }
 
+  /**
+   * Helper method that updates the active game state.
+   */
   public void updateActiveGame() {
     GameState gameState = racingModel.getGameState();
     if (gameState == GameState.ACTIVE_GAME) {
@@ -159,6 +175,11 @@ public class Racing2DView extends JPanel {
     }
   }
 
+  /**
+   * 
+   * Helper method that loops the tile board if the bottom of the screen is
+   * reached.
+   */
   private void tileBoardLoop() {
     if (this.tileYPos >= (this.screenHeight - this.TILEWIDTH) * 2) {
       this.tileYPos = this.screenHeight - this.TILEWIDTH;
@@ -166,12 +187,21 @@ public class Racing2DView extends JPanel {
     }
   }
 
+  /**
+   * 
+   * Helper method that sets a timer for spawning a new obstacle car.
+   */
   private void nextObstacleSpawnTimer() {
     if (racingModel.spawnObstacleCar(this.screenHeight)) {
       obstacleCarXPos = (int) (Math.random() * (this.getWidth() - 2 * this.sideMargin - 2 * TILEWIDTH)) + sideMargin;
     }
   }
 
+  /**
+   * 
+   * Helper method that detects a collision between the main car and the obstacle
+   * car.
+   */
   private void colisonDetector() {
     Double margin = 10D;
     Rectangle2D mainCar = new Rectangle2D.Double(this.mainCarXPos + margin, this.screenHeight / 2 + margin,
@@ -185,13 +215,12 @@ public class Racing2DView extends JPanel {
       racingModel.setNextObstacleSpawnTime(-100);
       racingModel.setObstacleCarYPos(this.screenHeight);
     }
-
   }
 
   /**
-   * Draws the "Game Over" message with instructions on how to restart the game.
    * 
-   * @param graphics2d the Graphics2D object used to draw the "Game Over" message
+   * Helper method that draws the "Game Over" message with instructions on how to
+   * restart the game.
    */
   private void drawGameOver() {
     int gameOverBigFontSize = (int) screenWitdh / 8;
@@ -209,10 +238,7 @@ public class Racing2DView extends JPanel {
   }
 
   /**
-   * Draws the game score and the highscore on the screen.
-   *
-   * @param graphics2d the Graphics2D object used to draw the game score and
-   *                   highscore
+   * Draws the game score, the highscore and lives on the screen.
    */
   private void drawScore() {
     graphics2d.setColor(Color.GREEN);
@@ -234,14 +260,29 @@ public class Racing2DView extends JPanel {
   }
 
   /*---Setters and getters---*/
+  /**
+   * Setter for the x position of the main car.
+   * 
+   * @param x the new x position of the main car
+   */
   public void setMainCarXPos(int x) {
     this.mainCarXPos = x;
   }
 
+  /**
+   * Getter for the x position of the main car.
+   * 
+   * @return the x position of the main car
+   */
   public int getMainCarXPos() {
     return mainCarXPos;
   }
 
+  /**
+   * Getter for the side margin.
+   * 
+   * @return the side margin
+   */
   public int getSideMargin() {
     return sideMargin;
   }

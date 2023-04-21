@@ -6,6 +6,7 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequencer;
 
 public class SongHandler implements Runnable {
+    // Klassen er arvet fra INF101 på UIB
     // Musikk hentet fra https://bitmidi.com/blur-song-2-mid
     private static final String TETRISMUSIC = "blur_song_2.mid";
     private Sequencer sequencer;

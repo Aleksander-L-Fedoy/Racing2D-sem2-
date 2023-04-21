@@ -20,6 +20,14 @@ public class RacingBoard {
         }
     }
 
+    /**
+     * Helper method to initialize the background tiles of the board.
+     * Sets the background tiles to either GRASSTILE or ROADTILE depending on the
+     * position on the board.
+     *
+     * @return true if the background tiles are successfully initialized, false
+     *         otherwise
+     */
     private boolean initializeBackground() {
         try {
             for (int row = 0; row < rows; row++) {
@@ -37,6 +45,13 @@ public class RacingBoard {
         }
     }
 
+    /**
+     * Helper method to initialize the tiles on the board.
+     * Sets the tiles to APEXTILE or LANESEPERATORTILE depending on the position on
+     * the board.
+     *
+     * @return true if the tiles are successfully initialized, false otherwise
+     */
     private boolean initializeTiles() {
         try {
             for (int row = 0; row < rows; row++) {
@@ -53,22 +68,41 @@ public class RacingBoard {
         } catch (Exception e) {
             return false;
         }
-
     }
 
     /*---Getters---*/
+    /**
+     * Returns the background tiles of the board.
+     *
+     * @return the 2D array of background tiles
+     */
     public Tile[][] getBackgroundTiles() {
         return backgroundTiles;
     }
 
+    /**
+     * Returns the tiles of the board.
+     *
+     * @return the 2D array of tiles
+     */
     public Tile[][] getTiles() {
         return tiles;
     }
 
+    /**
+     * Returns the number of rows on the board.
+     *
+     * @return the number of rows
+     */
     public int getRows() {
         return rows;
     }
 
+    /**
+     * Returns the number of columns on the board.
+     *
+     * @return the number of columns
+     */
     public int getCols() {
         return cols;
     }

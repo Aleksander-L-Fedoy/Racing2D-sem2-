@@ -62,12 +62,25 @@ public class RacingController implements java.awt.event.KeyListener {
     /*--- Ends here ---*/
 
     /*--- Private helper methods ---*/
+    /**
+     * Helper method to handle starting the game.
+     * If the user presses the Enter key, the game state is set to ACTIVE_GAME.
+     *
+     * @param keyEvent the KeyEvent object representing the key that was pressed
+     */
     private void startedGame(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
             this.RACINGMODEL.setGameState(GameState.ACTIVE_GAME);
         }
     }
 
+    /**
+     * Helper method to handle the game being in progress.
+     * If the user presses the left or right arrow key, the main car's position is
+     * updated if there is no collision.
+     *
+     * @param keyCode the key code of the key that was pressed
+     */
     private void activeGame(int keyCode) {
         if (keyCode == KeyEvent.VK_LEFT) {
             if (noCollision(mainCarXPos - OFFSET)) {
@@ -81,16 +94,37 @@ public class RacingController implements java.awt.event.KeyListener {
         RACING2DVIEW.setMainCarXPos(mainCarXPos);
     }
 
+    /**
+     * Helper method to handle the game ending.
+     * If the user presses the R key, the game is reset.
+     *
+     * @param keyEvent the KeyEvent object representing the key that was pressed
+     */
     private void endedGame(KeyEvent keyEvent) {
         if (keyEvent.getKeyCode() == KeyEvent.VK_R) {
             RACINGMODEL.reset();
         }
     }
 
+    /**
+     * Helper method to check if the main car would collide with the side walls if
+     * moved to the given position.
+     *
+     * @param nextMainCarXPos the x-position of the main car if moved to the given
+     *                        position
+     * @return true if there is no collision, false otherwise
+     */
     private boolean noCollision(int nextMainCarXPos) {
         return nextMainCarXPos > sideMargin && nextMainCarXPos + CARWIDTH < windowWidth - sideMargin;
     }
 
+    /**
+     * Helper method to handle the timer tick.
+     * Updates the window size and side margin variables, and calls the appropriate
+     * methods based on the game state.
+     *
+     * @param event the ActionEvent object representing the timer tick
+     */
     private void clockTick(ActionEvent event) {
         this.windowWidth = RACING2DVIEW.getWidth();
         this.sideMargin = RACING2DVIEW.getSideMargin();
@@ -100,4 +134,5 @@ public class RacingController implements java.awt.event.KeyListener {
         RACING2DVIEW.updateActiveGame();
         RACING2DVIEW.repaint();
     }
+
 }
