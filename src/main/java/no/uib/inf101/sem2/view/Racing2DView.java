@@ -176,7 +176,6 @@ public class Racing2DView extends JPanel {
   }
 
   /**
-   * 
    * Helper method that loops the tile board if the bottom of the screen is
    * reached.
    */
@@ -188,7 +187,6 @@ public class Racing2DView extends JPanel {
   }
 
   /**
-   * 
    * Helper method that sets a timer for spawning a new obstacle car.
    */
   private void nextObstacleSpawnTimer() {
@@ -198,7 +196,6 @@ public class Racing2DView extends JPanel {
   }
 
   /**
-   * 
    * Helper method that detects a collision between the main car and the obstacle
    * car.
    */
@@ -218,7 +215,6 @@ public class Racing2DView extends JPanel {
   }
 
   /**
-   * 
    * Helper method that draws the "Game Over" message with instructions on how to
    * restart the game.
    */
