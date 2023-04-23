@@ -8,7 +8,7 @@ public class RacingBoard {
 
     public RacingBoard(int cols) throws IllegalArgumentException {
         if (cols < 5) {
-            throw new IllegalArgumentException("Column size must be at least 5");
+            throw new IllegalArgumentException("The number of columns in the racing board must be at least 5.");
         } else {
             this.rows = 80;
             this.cols = cols;

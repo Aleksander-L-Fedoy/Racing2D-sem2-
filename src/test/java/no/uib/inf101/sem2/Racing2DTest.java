@@ -109,6 +109,16 @@ public class Racing2DTest {
     @Test
     void testGetGameState() {
         assertEquals(GameState.GAME_STARTED, racingModel.getGameState());
+        racingModel.setGameState(GameState.ACTIVE_GAME);
+        assertEquals(GameState.ACTIVE_GAME, racingModel.getGameState());
+    }
+
+    @Test
+    void testRacingBoardThrowsException() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> new RacingBoard(4));
+        String expectedMessage = "The number of columns in the racing board must be at least 5.";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 
 }
