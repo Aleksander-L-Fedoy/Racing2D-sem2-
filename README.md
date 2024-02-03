@@ -2,6 +2,8 @@
 
 This is a 2D car racing game built using Java Swing. The objective of the game is to avoid obstacles and earn points by driving as far as possible.
 
+![Game Thumbnail](racing2d_thumbnail.png)
+
 ## How to Play
 
 Use the arrow keys to move the car left and right, avoiding obstacles on the road. The game starts with three lives, and you lose a life each time you hit an obstacle. The game ends when you lose all three lives.
